@@ -12,6 +12,7 @@ from kivy.graphics import Rotate
 from kivy.graphics.context_instructions import PopMatrix, PushMatrix
 from kivy.uix.button import Button
 from kivy.uix.behaviors import ButtonBehavior
+from win32api import GetSystemMetrics
 
 from kivy.config import Config
 Config.set('graphics', 'width', '200')
@@ -20,11 +21,11 @@ Config.set('graphics', 'height', '200')
 DEFAULT_WIDTH = 2560
 DEFAULT_HEIGHT = 1440
 
-WIDTH = 1920
+WIDTH = GetSystemMetrics(0)
 HEIGHT = WIDTH * float(9)/16
 Window.size = (WIDTH, HEIGHT)
 Ratio = ((float(4)/3) * float(WIDTH)/DEFAULT_WIDTH, ((float(4)/3) * float(HEIGHT)/DEFAULT_HEIGHT))
-#Window.fullscreen = 'auto'
+Window.fullscreen = 'auto'
 
 SQUARE = 82.3 * Ratio[0]
 
@@ -120,6 +121,11 @@ class Graphics(Image):
             self.pc.addShape(offset, myShape)
             return True
         return False
+
+    # def visualSolution(self):
+    #     for row in self.pc.board:
+    #         for num in row:
+    #             if
 
 
 class shapeButton(ButtonBehavior, Image):
@@ -219,7 +225,7 @@ class shapeImg(Image):
             self.flipped = True
 
     def getArrayPos(self):
-        pos = (int(round((self.pos[1] - 420 * Ratio[1]) / SQUARE)) + 1 - int(self.size[1] / SQUARE), -int(round(((self.pos[0] - 426 * Ratio[0]) / SQUARE))))
+        pos = (int(round((self.pos[1] - 420 * Ratio[1]) / SQUARE)) + 1 - int(round(self.size[1] / SQUARE)), -int(round(((self.pos[0] - 426 * Ratio[0]) / SQUARE))))
 
         if self.shapeid == 6 or self.shapeid == 7:
                 if self.rot.angle == 90:
@@ -335,6 +341,7 @@ class SolveButton(Button, Image):
         graphics.start = timeit.default_timer()
         graphics.clear()
         if graphics.pc.solve(graphics.pc.shapes):
+            # graphics.visualSolution()
             graphics.pc.printBoard()
             learn.add(graphics.pc.shapesOrder())
             learn.updateOrder()
